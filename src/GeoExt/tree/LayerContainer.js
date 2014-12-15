@@ -65,16 +65,32 @@ Ext.define('GeoExt.tree.LayerContainer', {
      */
     defaultText: 'Layers',
 
+    config: {
+        /**
+         *
+         */
+        loader: null
+    },
+
+    constructor: function(config) {
+        var me = this;
+
+        me.initConfig(config);
+        me.callParent(config);
+    },
+
     /**
      * @private
      */
     init: function(target) {
         var me = this;
 
-        var loader = me.loader;
+        var loader = me.getLoader();
 
-        me.loader = (loader && loader instanceof GeoExt.tree.LayerLoader) ?
-            loader : new GeoExt.tree.LayerLoader(loader);
+        var myloader = (loader && loader instanceof GeoExt.tree.LayerLoader) ?
+                loader : Ext.create('GeoExt.tree.LayerLoader',loader);
+
+        me.setLoader(myloader);
 
         target.set('container', me);
 
@@ -82,7 +98,8 @@ Ext.define('GeoExt.tree.LayerContainer', {
             target.set('text', me.defaultText);
             target.commit();
         }
-        me.loader.load(target);
+
+        me.getLoader().load(target);
     },
 
     /**
