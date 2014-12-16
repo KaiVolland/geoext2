@@ -30,7 +30,8 @@ Ext.define('GeoExt.data.reader.Wmc', {
      * @param {Object} [config] Config object.
      */
     constructor: function(config) {
-        if (!this.model) {
+        var model = GeoExt.isExt4 ? this.model : this.getModel();
+        if (!model) {
             this.setModel('GeoExt.data.WmcLayerModel');
         }
         this.callParent([config]);
@@ -68,6 +69,12 @@ Ext.define('GeoExt.data.reader.Wmc', {
      * @private
      */
     readRecords: function(data) {
+        if (data instanceof Ext.data.ResultSet) {
+            // we get into the readRecords method twice,
+            // called by Ext.data.reader.Reader#read:
+            // check if we already did our work in a previous run
+            return data;
+        }
         if(typeof data === "string" || data.nodeType) {
             data = this.format.read(data);
         }
@@ -90,6 +97,8 @@ Ext.define('GeoExt.data.reader.Wmc', {
             }
         }
 
+        // this.callParent breaks the data cause ExtJS5 uses the model to modify
+        // even this
         return this.callParent([records]);
     }
 

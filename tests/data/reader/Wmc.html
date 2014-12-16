@@ -33,28 +33,24 @@
         }
 
         function test_read(t) {
-            t.plan(18);
+            t.plan(16);
 
             // test a reader with the only two default LayerRecord fields
 
             var reader = Ext.create("GeoExt.data.reader.Wmc");
-            var records = reader.read({responseXML: doc, responseText: true});
+            var records = reader.read({
+                responseXML: doc,
+                responseText: true
+            });
 
             //1 test
-            t.eq(records.totalRecords, 3, 'readRecords returns correct number of records');
-
-            var record = records.records[1];
-            t.eq(record.get("name"), "geob:communes_geofla", "correct name record field");
-
-            reader.destroy();
-
-            // test a reader with all default fields
-
-            reader = Ext.create("GeoExt.data.reader.Wmc");
-            records = reader.read({responseXML: doc, responseText: true});
-
-            //1 test
-            t.eq(records.totalRecords, 3, 'readRecords returns correct number of records');
+            var count;
+            if(GeoExt.isExt4){
+                count = records.totalRecords;
+            } else {
+                count = records.getTotal();
+            }
+            t.eq(count, 3, 'readRecords returns correct number of records');
 
             var record = records.records[1];
             //10 tests -- testing the fields of a record

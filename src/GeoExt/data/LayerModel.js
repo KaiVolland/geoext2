@@ -56,6 +56,10 @@ Ext.define('GeoExt.data.LayerModel',{
      * @return {OpenLayers.Layer}
      */
     getLayer: function() {
+        // extjs4 -> returns an ol-layer in raw with attribute layer = wmc-title
+        // extjs5 -> returns an ol-layer in data (raw is deprecated and behaves the same)
+        // with attribute name = name
+        // seems like the mapping doesnt work correctly in extjs5
         return (GeoExt.isExt4) ? this.raw : this.data;
     }
 });
