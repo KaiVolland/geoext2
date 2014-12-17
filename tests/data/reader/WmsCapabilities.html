@@ -30,7 +30,11 @@
             var reader = Ext.create("GeoExt.data.reader.WmsCapabilities");
             t.ok(reader.format instanceof OpenLayers.Format.WMSCapabilities, "default format gets created");
             reader.destroy();
-            reader = Ext.create("GeoExt.data.reader.WmsCapabilities", {format: new OpenLayers.Format.WMSCapabilities.v1_1_1_WMSC()});
+
+            var format = new OpenLayers.Format.WMSCapabilities.v1_1_1_WMSC();
+            reader = Ext.create("GeoExt.data.reader.WmsCapabilities", {
+                format: format
+            });
             t.ok(reader.format instanceof OpenLayers.Format.WMSCapabilities.v1_1_1_WMSC, "custom format used");
         }
 
@@ -65,7 +69,8 @@
             });
             records = reader.read({responseXML: doc, responseText: true});
             t.ok(!reader.raw, "raw property not populated by default");
-            t.eq(records.totalRecords, 22, 'readRecords returns correct number of records');
+            var count = GeoExt.isExt4 ? records.totalRecords : records.getTotal();
+            t.eq(count, 22, 'readRecords returns correct number of records');
 
             var layer;
 
@@ -134,7 +139,7 @@
             t.eq(layer.CLASS_NAME, "OpenLayers.Layer.WMS", "[2] layer field is of type OpenLayers.Layer.WMS");
             t.eq(layer.url, "http://publicus.opengeo.org:80/geoserver/wms?SERVICE=WMS&", "[2] layer field has correct URL");
             t.eq(layer.params.LAYERS, "tiger:tiger_roads","[2] layer field has correct LAYERS parameter");
-            t.eq(layer.name, "Manhattan (NY) roads","[2] layer field has correct name");
+            t.eq(layer.name, "Manhattan (NY) roads","[2] layer field has correct name"); // Error in ExtJS5 my come from the same mappingissue like in wmc.
             t.eq(typeof(layer.minScale), "number","[2] layer minScale has been set");
             t.eq(typeof(layer.maxScale), "number","[2] layer maxScale has been set");
             t.eq(layer.singleTile, true, "[2] layer field has correct singleTile attribute (from WMSCapabilitiesReader constructor)");
